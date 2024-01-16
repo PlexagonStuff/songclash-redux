@@ -1,0 +1,171 @@
+{
+    "props": {
+        "pageProps": {
+            "_sentryTraceData": "41e82917ff5f46d8b4c21c01240a8405-ac9f1a48bf245a76-0",
+            "_sentryBaggage": "sentry-environment=production,sentry-release=86bcf689-a807-4c9e-83d6-e9fbe89a51d2,sentry-public_key=4cc707ab12ea4779b417479c0550a5cb,sentry-trace_id=41e82917ff5f46d8b4c21c01240a8405,sentry-sample_rate=0,sentry-transaction=%2Ftrack%2F%5Bid%5D,sentry-sampled=false",
+            "state": {
+                "data": {
+                    "entity": {
+                        "type": "track",
+                        "name": "Red Sun",
+                        "uri": "spotify:track:5lwWpQ71GKN3sWmk8zZr9g",
+                        "id": "5lwWpQ71GKN3sWmk8zZr9g",
+                        "title": "Red Sun",
+                        "artists": [
+                            {
+                                "name": "Dreamcatcher",
+                                "uri": "spotify:artist:5V1qsQHdXNm4ZEZHWvFnqQ"
+                            }
+                        ],
+                        "coverArt": {
+                            "extractedColors": {
+                                "colorDark": {
+                                    "hex": "#887038"
+                                },
+                                "colorLight": {
+                                    "hex": "#8D743A"
+                                }
+                            },
+                            "sources": [
+                                {
+                                    "url": "https://i.scdn.co/image/ab67616d00001e0219224fae0aa53341020f5b12",
+                                    "width": 300,
+                                    "height": 300
+                                },
+                                {
+                                    "url": "https://i.scdn.co/image/ab67616d0000485119224fae0aa53341020f5b12",
+                                    "width": 64,
+                                    "height": 64
+                                },
+                                {
+                                    "url": "https://i.scdn.co/image/ab67616d0000b27319224fae0aa53341020f5b12",
+                                    "width": 640,
+                                    "height": 640
+                                }
+                            ]
+                        },
+                        "releaseDate": {
+                            "isoString": "2020-02-18T00:00:00Z"
+                        },
+                        "duration": 185093,
+                        "maxDuration": 185093,
+                        "isPlayable": true,
+                        "isExplicit": false,
+                        "audioPreview": {
+                            "url": "https://p.scdn.co/mp3-preview/14e6a89db2a07cecf53685f57202eb02fb4670e0"
+                        },
+                        "hasVideo": false,
+                        "relatedEntityUri": "spotify:artist:5V1qsQHdXNm4ZEZHWvFnqQ"
+                    },
+                    "embeded_entity_uri": "spotify:track:5lwWpQ71GKN3sWmk8zZr9g",
+                    "defaultAudioFileObject": {
+                        "passthrough": "NONE"
+                    },
+                    "backgroundColor": "#887038"
+                },
+                "settings": {
+                    "rtl": false,
+                    "session": {
+                        "accessToken": "BQD6yAu1vO8F07EerUT2PkM2qV6CN6-Aa8L74s_eNfZpU1865T3VqEvip472VCUje2-a6ksGL4uk0lZLeyy6qy71zSi2Zs5mLYnwV7MH130VhcReQ7FM5MlL1zzWB8_OuHkjBvwPHZ8gL4x_s8Tvy3zX1vjqC5X7PLbhoYrDQvd1inVaQsyThoYwYqfitkZCjW1zfiQwEAh6lKeZJWCyM6hj21SfdsvDUhmS8kNzLNIt",
+                        "accessTokenExpirationTimestampMs": 1705340744173,
+                        "isAnonymous": false
+                    },
+                    "entityContext": "track",
+                    "clientId": "ab9ad0d96a624805a7d51e8868df1f97",
+                    "isPremiumOnlyMarket": false,
+                    "isMobile": false,
+                    "isSafari": false,
+                    "isIOS": false,
+                    "isTablet": false
+                }
+            },
+            "config": {
+                "correlationId": "2027caba-a46b-4eb9-a6f1-6419da61c201",
+                "clientId": "ab9ad0d96a624805a7d51e8868df1f97",
+                "strings": {
+                    "error-page.unsupported-browser.title": "Unsupported browser",
+                    "error-page.not-available-in-region.title": "Sorry, that’s not currently available in your region.",
+                    "error-page.not-available.title": "Sorry, that’s not currently available.",
+                    "error-page.not-found.title": "Page not found",
+                    "error-page.server-error.title": "Page not available",
+                    "error-page.unsupported-browser.description": "Spotify is unavailable on this browser. For the best listening experience update your browser or download the Spotify app.",
+                    "error-page.not-available.description": "Luckily, lots of other stuff is.",
+                    "error-page.not-found.description": "We can’t seem to find the page you are looking for.",
+                    "error-page.server-error.description": "Something went wrong, please try again later.",
+                    "error-page.unsupported-browser.get-the-app": "Get the App",
+                    "error-page.unsupported-browser.learn-more": "Learn more",
+                    "error-page.not-available.cta": "Discover more",
+                    "error-page.not-found.home": "Home",
+                    "error-page.not-found.help": "Help",
+                    "spe.tags": "Tags",
+                    "spe.track_list": "Track list",
+                    "embed.saved-on-spotify": "Saved on Spotify",
+                    "embed.save-on-spotify": "Save on Spotify",
+                    "spe.top_tracks": "Top tracks",
+                    "card.a11y.explicit": "Explicit",
+                    "embed_preview": "Preview",
+                    "track-trailer": "Trailer",
+                    "audiobook.page.sample": "Sample",
+                    "spe.playback-control.pause-track": "Pause track",
+                    "spe.playback-control.play-track": "Play track",
+                    "play_on_spotify": "Play on Spotify",
+                    "spe.copy_link": "Copy link",
+                    "embed_success_share_link": "Copied to clipboard",
+                    "spe.privacy_policy": "Privacy Policy",
+                    "spe.terms_and_conditions": "Terms \u0026 Conditions",
+                    "close_button_action": "Close",
+                    "spe.playback-control.progress-timestamp": "Progress timestamp",
+                    "spe.playback-control.skip-back": "Previous",
+                    "spe.playback-control.skip-backward-15": "Skip back 15 seconds",
+                    "spe.playback-control.skip-forward": "Next",
+                    "spe.playback-control.skip-forward-15": "Skip forward 15 seconds",
+                    "embed_more": "More",
+                    "embed_play": "Play",
+                    "embed_pause": "Pause",
+                    "close": "Close",
+                    "embed-video.menu.copy-link": "Copy share link",
+                    "contextmenu.remove-from-your-episodes": "Remove from Your Episodes",
+                    "contextmenu.save-to-your-episodes": "Save to Your Episodes",
+                    "follow-button.unfollow-tooltip": "Unfollow on Spotify",
+                    "follow_on_spotify": "Follow on Spotify",
+                    "spe.terms_of_use": "Spotify Terms of Use",
+                    "embed-video.video-not-available": "This video is unavailable",
+                    "watch_on_spotify": "Watch on Spotify",
+                    "embed-video.upsell.whatch-long-episode": "Watch the full {0} hr {1} min episode on Spotify for free",
+                    "embed-video.upsell.watch-episode": "Watch the full {0} min episode on Spotify for free",
+                    "embed-video.upsell.watch-now": "Watch now",
+                    "get_spotify": "Get Spotify",
+                    "page.loading": "Loading",
+                    "spe.error_heading": "Something went wrong",
+                    "spe.play": "Play",
+                    "spe.pause": "Pause",
+                    "audiobook.embed.buy-this-audiobook": "Buy this audiobook",
+                    "following": "Following",
+                    "follow": "Follow",
+                    "audiobook.embed.upsell_cta": "Hooked? Take this audiobook everywhere you go, on Spotify",
+                    "spe.podcast_full_upsell_cta": "Discover even more from {0}",
+                    "spe.upsell_cta": "Discover even more podcasts on Spotify",
+                    "spe.track_upsell_cta": "Listen to the full track and millions more on Spotify",
+                    "spe.track_list_upsell": "Listen to these tracks \u0026 millions more on Spotify",
+                    "playback-control.unmute": "Unmute",
+                    "playback-control.mute": "Mute",
+                    "npv.exit-full-screen": "Exit full screen",
+                    "npv.full-screen": "Full screen",
+                    "embed-video.controls.replay": "Replay"
+                },
+                "locale": "en"
+            }
+        },
+        "__N_SSP": true
+    },
+    "page": "/track/[id]",
+    "query": {
+        "id": "5lwWpQ71GKN3sWmk8zZr9g"
+    },
+    "buildId": "86bcf689-a807-4c9e-83d6-e9fbe89a51d2",
+    "assetPrefix": "https://embed-cdn.spotifycdn.com",
+    "isFallback": false,
+    "gssp": true,
+    "appGip": true,
+    "scriptLoader": []
+}

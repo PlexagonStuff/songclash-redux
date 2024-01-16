@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title> Songclash Redux</title>
+    <script src="/socket.io/socket.io.js"></script>
+    
+</head>
+<body>
+<div id = "openingPage">
+<h1>
+    Welcome to Songclash Redux!
+</h1>
+<form id = "form" action="" onsubmit="return false">
+    <input type = "text" id = "username" placeholder="username"> 
+    <input type = "text" id = "joinRoom"> <button type = "button" id="joinButton" >Join Room</button>
+    <input type= "text" id = "createRoom"><button type = "button" id="createButton" >Create Room</button>
+</form>
+</div>
+<div id="startScreen" style="display: none;">
+    <h1 id = "roomName"></h1> 
+    <ul id="memberList">
+
+    </ul>
+    <button type="button" id="startGame"><span>Start :)</span></button>
+</div>
+
+<div id="gameScreen" style="display: none;">
+    <p id= "artistName"></p>
+    <p id="songName"></p>
+    <form action="" onsubmit="return false" id="guessForm">
+        <input type = "text" id = "userInput" placeholder="My Humps Black Eyed Peas">
+    </form>
+    <audio id="audioPlayer" autoplay="false" preload="none" src=""></audio>
+    <ul id="scoreList">
+
+    </ul>
+
+</div>
+
+</body>
+<script type = "text/javascript" src = "/scripts/main.js"></script>
+<script>
+  
+</script>
+
+
+
+
+
+
+</html>

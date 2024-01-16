@@ -1,0 +1,19 @@
+{
+  "name": "songclash-redux",
+  "version": "0.0.1",
+  "description": "my attempt to revive songclash from the dead",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+		"start": "node --env-file .env index.js"
+	},
+  "dependencies": {
+    "express": "^4.18.2",
+    "jsdom": "^23.2.0",
+    "socket.io": "^4.7.4",
+    "string-similarity": "^4.0.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
