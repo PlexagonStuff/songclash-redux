@@ -234,9 +234,16 @@ io.on('connection', (socket) => {
     });
 }
 
-  server.listen(3000, () => {
+//Production listening
+  server.listen(3000,"0.0.0.0", () => {
     console.log('server running at http://localhost:3000');
   });
+
+
+
+  /*server.listen(3000, () => {
+    console.log('server running at http://localhost:3000');
+  });*/
   //https://stackoverflow.com/questions/11935175/sampling-a-random-subset-from-an-array/11935263#11935263
   async function getRandomSubarray(arr, size) {
     var shuffled = arr.slice(0), i = arr.length, temp, index;
