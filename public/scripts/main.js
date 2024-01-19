@@ -30,19 +30,53 @@ socket.on("roundStart", (data)=> {
     element = document.getElementById("gameScreen");
     element.style.display = "block";
 
+    document.getElementById("sillyTitle").innerText = data.room; //+ " round: " + data.round;
+    document.getElementById("sillyRound").innerText = "round: " + data.round;
+
+    document.getElementById("artistName").style.visibility = "hidden";
+    document.getElementById("songName").style.visibility = "hidden";
+
+    document.getElementById("artistName").innerText = data.artist;
+    document.getElementById("songName").innerText = data.song;
+
     var scoreboard = document.getElementById("scoreList");
     scoreboard.innerHTML = "";
     for (var peeps of Object.keys(data.scoreboard)) {
+        if (peeps != "rounds") {
         const item = document.createElement('li');
         item.textContent = peeps + ": " + (data.scoreboard[peeps]).toString();
         console.log(item.textContent);
        scoreboard.appendChild(item);
+        }
     }
 
     var audioPlayer = document.getElementById("audioPlayer");
     audioPlayer.src = data.audio;
+    audioPlayer.volume = 0.5;
     audioPlayer.load();
     audioPlayer.play();
+});
+
+socket.on("scoreUpdate", (data)=> {
+    var scoreboard = document.getElementById("scoreList");
+    scoreboard.innerHTML = "";
+    for (var peeps of Object.keys(data.scoreboard)) {
+        if (peeps != "rounds") {
+        const item = document.createElement('li');
+        item.textContent = peeps + ": " + (data.scoreboard[peeps]).toString();
+        console.log(item.textContent);
+       scoreboard.appendChild(item);
+        }
+    }
+});
+
+socket.on("unveilGuess", (data)=> {
+    if (data.artist) {
+        document.getElementById("artistName").style.visibility = "visible";
+    }
+    if (data.title) {
+        document.getElementById("songName").style.visibility = "visible";
+    }
 });
 
 const form = document.getElementById('form');
@@ -61,6 +95,7 @@ guessForm.addEventListener('submit', (e) => {
     e.preventDefault();
     if (userInput.value) {
       //socket.emit('chat message', input.value);
+      socket.emit("processAnswers", {room: document.getElementById("sillyTitle").innerText, round: document.getElementById("sillyRound").innerText.split(" ")[1], answer: userInput.value})
       console.log(userInput.value);
       userInput.value = '';
     }
