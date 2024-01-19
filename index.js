@@ -235,12 +235,12 @@ io.on('connection', (socket) => {
 }
 
 //Production listening
-  server.listen(3000,"0.0.0.0", () => {
+  server.listen(process.env.PORT,"0.0.0.0", () => {
     console.log('server running at http://localhost:3000');
   });
 
 
-
+  //Local hosting
   /*server.listen(3000, () => {
     console.log('server running at http://localhost:3000');
   });*/
