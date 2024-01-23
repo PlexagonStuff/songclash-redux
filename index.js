@@ -25,7 +25,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 app.use(express.static(__dirname + '/public'));
 
-console.log(await getAccessKey());
+//console.log(await getAccessKey());
 
 console.log(stringSimilarity.compareTwoStrings("The Black Eyed Peas", "Black Eyed Peas"));
 console.log(stringSimilarity.compareTwoStrings("michale hjacosn", "michael Jackson"));
@@ -68,9 +68,9 @@ io.on('connection', (socket) => {
 
     socket.on("startGame", async (data)=> {
       //https://developer.spotify.com/documentation/web-api/tutorials/getting-started
-      const accessToken = await getAccessKey();
-      console.log(accessToken);
-      let playlistData = await getPlaylistData(accessToken);
+      //const accessToken = await getAccessKey();
+      //console.log(accessToken);
+      let playlistData = await getPlaylistData();
       //console.log(playlistData);
       console.log(playlistData.length);
       playlistData = await getRandomSubarray(playlistData, 10);
@@ -79,9 +79,9 @@ io.on('connection', (socket) => {
       var counter = 1;
       for (var tracks of playlistData) {
         var song = {};
-        song["artist"] = tracks["track"]["artists"][0]["name"];
-        song["name"] = tracks["track"]["name"];
-        song["audio"] = await getSongAudio(tracks["track"]["id"]);
+        song["artist"] = tracks["artist"]["name"];
+        song["name"] = tracks["title_short"];
+        song["audio"] = tracks["preview"];//await getSongAudio(tracks["track"]["id"]);
         songs[counter.toString()] = song;
         counter++;
       }
@@ -234,16 +234,18 @@ io.on('connection', (socket) => {
     });
 }
 
-//Production listening
-  server.listen(process.env.PORT,"0.0.0.0", () => {
+// Production listening
+ server.listen(process.env.PORT,"0.0.0.0", () => {
     console.log('server running at ' + process.env.PORT);
   });
 
 
   //Local hosting
-  /*server.listen(3000, () => {
-    console.log('server running at http://localhost:3000');
-  });*/
+  //
+  //server.listen(3000, () => {
+   // console.log('server running at http://localhost:3000');
+ // });
+
   //https://stackoverflow.com/questions/11935175/sampling-a-random-subset-from-an-array/11935263#11935263
   async function getRandomSubarray(arr, size) {
     var shuffled = arr.slice(0), i = arr.length, temp, index;
@@ -256,7 +258,32 @@ io.on('connection', (socket) => {
     return shuffled.slice(0, size);
 }
 
-  async function getSongAudio(songId) {
+
+//These functions are for Deezer, which does not have a limit on how their API can be used, like for a game
+async function getPlaylistData() {
+  var response = await fetch("https://api.deezer.com/playlist/12296469951/", {
+        method: 'GET',
+      })
+    var jsonData = await response.json();
+    //Deezer provides 25 tracks per request
+    var offset = jsonData["nb_tracks"] - 25 ;
+    //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+    offset = Math.floor(Math.random() * offset+1);
+    //Requesting twice may seem a little silly, but this allows me to grab the size of the playlist to dynamically allow for greater
+    //song ranges so that this plus selecting a random amount of items will provide greater song variation.
+    console.log("Offset: " + offset);
+    var response = await fetch("https://api.deezer.com/playlist/12296469951/tracks?index="+offset, {
+        method: 'GET',
+      })
+    var jsonData = await response.json();
+    console.log(JSON.stringify(jsonData));
+    return await jsonData["data"];
+}
+
+/* The following is for Spotify embeds, and according to the spotify terms of service, using the API for a
+song game such as this is against the rules, so another solution must be found. */
+
+  async function getSpotifySongAudio(songId) {
     //https://github.com/spotify/web-api/issues/148#issuecomment-628197023
 
     var response = await fetch("https://open.spotify.com/embed/track/" + songId);
@@ -276,7 +303,7 @@ io.on('connection', (socket) => {
     return document.getElementById("__NEXT_DATA__").innerHTML;
   }
 
-  async function getPlaylistData(accessToken) {
+  async function getSpotifyPlaylistData(accessToken) {
     var response = await fetch("https://api.spotify.com/v1/playlists/37i9dQZF1DX1spT6G94GFC/tracks?market=US&limit=50", {
         method: 'GET',
         headers: {
@@ -301,7 +328,7 @@ io.on('connection', (socket) => {
       
   }
 
-  async function getAccessKey() {
+  async function getSpotifyAccessKey() {
 
     var urlencoded = new URLSearchParams();
       urlencoded.append("client_id", process.env.CLIENTID);
