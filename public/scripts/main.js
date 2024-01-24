@@ -36,8 +36,8 @@ socket.on("roundStart", (data)=> {
     document.getElementById("artistName").style.visibility = "hidden";
     document.getElementById("songName").style.visibility = "hidden";
 
-    document.getElementById("artistName").innerText = data.artist;
-    document.getElementById("songName").innerText = data.song;
+    document.getElementById("artistName").innerText = "";
+    document.getElementById("songName").innerText = "";
 
     var scoreboard = document.getElementById("scoreList");
     scoreboard.innerHTML = "";
@@ -71,12 +71,52 @@ socket.on("scoreUpdate", (data)=> {
 });
 
 socket.on("unveilGuess", (data)=> {
-    if (data.artist) {
-        document.getElementById("artistName").style.visibility = "visible";
+    //artist, guessArtist, title, guessTitle
+
+    document.getElementById("artistName").innerText = "";
+    document.getElementById("songName").innerText = ""; 
+
+    for (var artistWords of data.artist) {
+        var item = document.createElement("span");
+        item.textContent = artistWords + " ";
+        if (data.guessArtist.includes(artistWords)) {
+            item.style.visibility = "visible";
+        }
+        else {
+            item.style.visibility = "hidden";
+        }
+        document.getElementById("artistName").appendChild(item);
     }
-    if (data.title) {
-        document.getElementById("songName").style.visibility = "visible";
+    for (var titleWords of data.title) {
+        var item = document.createElement("span");
+        item.textContent = titleWords + " ";
+        if (data.guessTitle.includes(titleWords)) {
+            item.style.visibility = "visible";
+        }
+        else {
+            item.style.visibility = "hidden";
+        }
+        document.getElementById("songName").appendChild(item);
     }
+    
+
+
+
+    
+
+});
+
+socket.on("timer", (data)=> {
+    document.getElementById("timer").innerText = data.time;
+});
+
+socket.on("reset", (data)=> {
+    var element = document.getElementById("openingPage");
+    element.style.display = "block";
+    element = document.getElementById("startScreen");
+    element.style.display = "none";
+    element = document.getElementById("gameScreen");
+    element.style.display = "none";
 });
 
 const form = document.getElementById('form');

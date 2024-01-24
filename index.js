@@ -13,6 +13,7 @@ import {JSDOM} from 'jsdom';
 
 //https://nodejs.org/api/esm.html#:~:text=The%20CommonJS%20module%20require%20always,module%20from%20a%20CommonJS%20module.
 import { default as stringSimilarity } from 'string-similarity';
+import {default as levenshtein} from 'js-levenshtein';
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
@@ -30,6 +31,7 @@ app.use(express.static(__dirname + '/public'));
 console.log(stringSimilarity.compareTwoStrings("The Black Eyed Peas", "Black Eyed Peas"));
 console.log(stringSimilarity.compareTwoStrings("michale hjacosn", "michael Jackson"));
 console.log(stringSimilarity.compareTwoStrings("micahe lajcka", "michael jackson"));
+console.log(levenshtein("kitten", "sitting"));
 //app.use(express.static('/public'));
 
 //const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -72,7 +74,7 @@ io.on('connection', (socket) => {
       //console.log(accessToken);
       let playlistData = await getPlaylistData();
       //console.log(playlistData);
-      console.log(playlistData.length);
+      //console.log(playlistData.length);
       playlistData = await getRandomSubarray(playlistData, 10);
 
       var songs = {};
@@ -103,7 +105,7 @@ io.on('connection', (socket) => {
         for (var user of lolusers) {
           console.log(i + user);
           
-          scoreboard["rounds"][i.toString()][user] = {"artist": false, "song": false, "first": false};
+          scoreboard["rounds"][i.toString()][user] = {"artist": [], "artistTrue": false, "songTrue": false, "song": [], "first": false};
         }
         
       }
@@ -114,7 +116,12 @@ io.on('connection', (socket) => {
       for (let rounds = 0; rounds < (Object.keys(games[data.room]["songs"]).length); rounds++) {
         console.log(rounds.toString());
         io.to(data.room).emit("roundStart", {room: data.room, round: games[data.room]["round"], audio: games[data.room]["songs"][games[data.room]["round"].toString()]["audio"],artist: games[data.room]["songs"][games[data.room]["round"].toString()]["artist"],song: games[data.room]["songs"][games[data.room]["round"].toString()]["name"], scoreboard: games[data.room]["scoreboard"]});
-        await later(30000);
+        var timer = 29;
+        for (timer; timer > 0; timer--) {
+          await later(1000);
+          io.to(data.room).emit("timer", {time: timer });
+
+        }
         console.log("Woah the timer worked?");
         games[data.room]["round"] = games[data.room]["round"] + 1;
       }
@@ -136,6 +143,7 @@ io.on('connection', (socket) => {
         
       }
       rooms.splice(rooms.indexOf(data.room));
+      io.to(data.room).emit("reset");
       delete games[data.room];
       console.log(rooms);
       console.log(users);
@@ -144,6 +152,10 @@ io.on('connection', (socket) => {
       
 
     });
+    /*
+    THIS IS THE PROCESS ANSWER AREA!!!!!
+
+    */
 
     socket.on("processAnswers", async (data)=>{
       //room, round, answer
@@ -151,44 +163,80 @@ io.on('connection', (socket) => {
       console.log(users.get(socket.id));
       console.log(JSON.stringify(games[data.room]["scoreboard"]));
 
+      //This is a ton of stupid boilerplate but whatever
+
       var songArtist = games[data.room]["songs"][games[data.room]["round"].toString()]["artist"].toString();
       songArtist = String(songArtist).toLowerCase();
-      console.log(songArtist);
+      //console.log(songArtist);
+      var songArtistWords = songArtist.split(" ");
 
       var titleArtist = String(games[data.room]["songs"][games[data.room]["round"].toString()]["name"]).toLowerCase()
+      var titleArtistWords = titleArtist.split(" ");
       //console.log(songArtist);
 
-      var artistSimilarity = stringSimilarity.compareTwoStrings(String(data.answer).toLowerCase(), songArtist);
-      var titleSimilarity = stringSimilarity.compareTwoStrings(String(data.answer).toLowerCase(), titleArtist);
+      var answerWordArray = data.answer.split(" ");
 
-      console.log(artistSimilarity);
-      console.log(titleSimilarity);
+      var answerArtistWords = [];
+      var answerTitleWords = [];
+      
+      //Check for word similarities in the artist name
+      for (var answerWords of answerWordArray) {
+        for (var targetWords of songArtistWords) {
+          if (levenshtein(answerWords, targetWords) < 3) {
+            answerArtistWords.push(targetWords);
+          }
+        }
+      }
+
+      //Check for word similarities in the song title
+      for (var answerWords of answerWordArray) {
+        for (var targetWords of titleArtistWords) {
+          if (levenshtein(answerWords, targetWords) < 3) {
+            answerTitleWords.push(targetWords);
+          }
+        }
+      }
 
       var artistScore = games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["artist"];
+
+      for (var answerWords of answerArtistWords) {
+        if (!artistScore.includes(answerWords)) {
+          games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["artist"].push(answerWords);
+        }
+      }
       var titleScore = games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["song"];
 
-      if (artistSimilarity > 0.7) {
-        if (artistScore == false) {
-          artistScore = true;
-          games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["artist"] = true;
+      for (var answerWords of answerTitleWords) {
+        if (!titleScore.includes(answerWords)) {
+          games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["song"].push(answerWords);
+        }
+      }
+      var artistTrue = games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["artistTrue"];
+      var songTrue = games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["songTrue"];
+
+
+      if (games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["artist"].length == songArtistWords.length) {
+        if (artistTrue == false) {
+          artistTrue = true;
+          games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["artistTrue"] = true;
           games[data.room]["scoreboard"][users.get(socket.id)] += 1;
       }
         }
          
-      if (titleSimilarity > 0.7) {
-        if (titleScore == false) {
-          titleScore = true;
-          games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["song"] = true;
+      if (games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["song"].length == titleArtistWords.length) {
+        if (songTrue == false) {
+          songTrue = true;
+          games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["songTrue"] = true;
           games[data.room]["scoreboard"][users.get(socket.id)] += 1;
       }
       }
-      io.to(socket.id).emit("unveilGuess", {artist: artistScore, title: titleScore});
+      io.to(socket.id).emit("unveilGuess", {artist: songArtistWords, guessArtist: games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["artist"], title: titleArtistWords, guessTitle: games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["song"]});
       
-      console.log("Got Artist? " + artistScore);
-      console.log("Got Title? " + titleScore);
-      console.log(artistScore && titleScore);
+      //console.log("Got Artist? " + artistScore);
+     // console.log("Got Title? " + titleScore);
+     // console.log(artistScore && titleScore);
       
-      if (artistScore && titleScore) {
+      if (artistTrue && songTrue) {
         if (games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["first"] == false) {
           var firstWinner = true;
           for (var userz of games[data.room]["people"]) {
@@ -228,11 +276,6 @@ io.on('connection', (socket) => {
 
   });
 
-  async function later(delay) {
-    return new Promise(function(resolve) {
-        setTimeout(resolve, delay);
-    });
-}
 
 // Production listening
  server.listen(process.env.PORT,"0.0.0.0", () => {
@@ -241,21 +284,44 @@ io.on('connection', (socket) => {
 
 
   //Local hosting
-  //
+  
   //server.listen(3000, () => {
    // console.log('server running at http://localhost:3000');
  // });
 
+  /*
+   * ALL FUNCTIONS ARE STORED UNDER HERE!!!
+   * 
+   */
+
+
+  async function later(delay) {
+    return new Promise(function(resolve) {
+        setTimeout(resolve, delay);
+    });
+}
+
+
   //https://stackoverflow.com/questions/11935175/sampling-a-random-subset-from-an-array/11935263#11935263
+
+  //Nvm, I re-did this all myself.
   async function getRandomSubarray(arr, size) {
-    var shuffled = arr.slice(0), i = arr.length, temp, index;
-    while (i--) {
-        index = Math.floor((i + 1) * Math.random());
-        temp = shuffled[index];
-        shuffled[index] = shuffled[i];
-        shuffled[i] = temp;
+    var shuffled = [];
+    while (shuffled.length < size) {
+      var randomInt = Math.floor(Math.random() * arr.length);
+      var randomSong = arr.at(randomInt);
+      console.log(randomSong["preview"]);
+      if (!shuffled.includes(randomSong)) {
+        if (randomSong["preview"] != "") {
+          shuffled.push(randomSong);
+        }
+      }
+      console.log(shuffled.length);
     }
-    return shuffled.slice(0, size);
+    
+    return shuffled;
+    
+    
 }
 
 
@@ -268,7 +334,8 @@ async function getPlaylistData() {
     //Deezer provides 25 tracks per request
     var offset = jsonData["nb_tracks"] - 25 ;
     //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
-    offset = Math.floor(Math.random() * offset+1);
+    offset = Math.floor(Math.random() * offset);
+    //offset = 652;
     //Requesting twice may seem a little silly, but this allows me to grab the size of the playlist to dynamically allow for greater
     //song ranges so that this plus selecting a random amount of items will provide greater song variation.
     console.log("Offset: " + offset);
@@ -276,7 +343,7 @@ async function getPlaylistData() {
         method: 'GET',
       })
     var jsonData = await response.json();
-    console.log(JSON.stringify(jsonData));
+    //console.log(JSON.stringify(jsonData));
     return await jsonData["data"];
 }
 

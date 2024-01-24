@@ -5,10 +5,11 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-		"start": "node --env-file .env index.js"
-	},
+    "start": "node --env-file .env index.js"
+  },
   "dependencies": {
     "express": "^4.18.2",
+    "js-levenshtein": "^1.1.6",
     "jsdom": "^23.2.0",
     "socket.io": "^4.7.4",
     "string-similarity": "^4.0.4"
