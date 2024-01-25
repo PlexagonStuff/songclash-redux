@@ -5,9 +5,12 @@
 <head>
     <title> Songclash Redux</title>
     <script src="/socket.io/socket.io.js"></script>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Songclash Redux is a song guessing game resembling the defunct thesongclash.com">
+
 </head>
 <body>
+
 <div id = "openingPage">
 <h1>
     Welcome to Songclash Redux!
@@ -27,6 +30,7 @@
 </div>
 
 <div id="gameScreen" style="display: none;">
+    <div style="justify-content: center;">
     <h1 id = "sillyTitle"></h1>
     <h2 id="sillyRound"></h2>
     <h1 id="timer"></h1>
@@ -39,7 +43,8 @@
     <ul id="scoreList">
 
     </ul>
-    
+    <p id="previousSong"></p>
+    </div>
 
 </div>
 <p id="warning"></p>

@@ -115,13 +115,16 @@ io.on('connection', (socket) => {
       console.log(games);
       for (let rounds = 0; rounds < (Object.keys(games[data.room]["songs"]).length); rounds++) {
         console.log(rounds.toString());
+        //Please ignore how long this line is.
         io.to(data.room).emit("roundStart", {room: data.room, round: games[data.room]["round"], audio: games[data.room]["songs"][games[data.room]["round"].toString()]["audio"],artist: games[data.room]["songs"][games[data.room]["round"].toString()]["artist"],song: games[data.room]["songs"][games[data.room]["round"].toString()]["name"], scoreboard: games[data.room]["scoreboard"]});
+
+        //This timer implementation provided a way to show the time left to the players
         var timer = 29;
         for (timer; timer > 0; timer--) {
-          await later(1000);
           io.to(data.room).emit("timer", {time: timer });
-
+          await later(1000);
         }
+        io.to(data.room).emit("previousSong", {prevSong: games[data.room]["songs"][games[data.room]["round"].toString()]["name"], prevArtist: games[data.room]["songs"][games[data.room]["round"].toString()]["artist"]});
         console.log("Woah the timer worked?");
         games[data.room]["round"] = games[data.room]["round"] + 1;
       }
@@ -129,6 +132,8 @@ io.on('connection', (socket) => {
       await later(5000);
       var usersInRoom = [];
       //Apparently Iterators are different from Arrays, and Arrays are way more helpful, so this casting had to happen. Cringe
+      //This block also removes the users and game and room from the given arrays, Maps, and Objects so that a room with that
+      //name can be re-initialized.
       console.log("Is this working?" + Array.from(userRooms.values()).length);
       for (var z = 0; z < Array.from(userRooms.values()).length; ++z) {
         
@@ -143,7 +148,10 @@ io.on('connection', (socket) => {
         
       }
       rooms.splice(rooms.indexOf(data.room));
+
+      //Send players back to the "main" screen
       io.to(data.room).emit("reset");
+
       delete games[data.room];
       console.log(rooms);
       console.log(users);
@@ -197,6 +205,9 @@ io.on('connection', (socket) => {
         }
       }
 
+      //This section of code checks the found words from the given answer, and sees if they have been found/guessed
+      //already. If they have not, then they are added to the found array for both artist and song name.
+
       var artistScore = games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["artist"];
 
       for (var answerWords of answerArtistWords) {
@@ -211,6 +222,12 @@ io.on('connection', (socket) => {
           games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["song"].push(answerWords);
         }
       }
+
+      /*
+      * This section is super easy to understand. If the found word array length is the same as the total word array length, that
+      * means that every word in the answer has been found, and that boolean is flipped true and the score increases. There is 
+      * obviously a locking feature that prevents answers to be counted multiple times.
+      */
       var artistTrue = games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["artistTrue"];
       var songTrue = games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["songTrue"];
 
@@ -230,12 +247,16 @@ io.on('connection', (socket) => {
           games[data.room]["scoreboard"][users.get(socket.id)] += 1;
       }
       }
+
+      //After the guess has been processed, the info is sent to the client to be displayed in browser.
       io.to(socket.id).emit("unveilGuess", {artist: songArtistWords, guessArtist: games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["artist"], title: titleArtistWords, guessTitle: games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["song"]});
       
       //console.log("Got Artist? " + artistScore);
      // console.log("Got Title? " + titleScore);
      // console.log(artistScore && titleScore);
       
+      //This block just checks if a given player is the first to guess both song and artist. If they are, they get an extra point.
+
       if (artistTrue && songTrue) {
         if (games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["first"] == false) {
           var firstWinner = true;
@@ -279,22 +300,23 @@ io.on('connection', (socket) => {
 
 // Production listening
  server.listen(process.env.PORT,"0.0.0.0", () => {
-    console.log('server running at ' + process.env.PORT);
+   console.log('server running at ' + process.env.PORT);
   });
 
 
   //Local hosting
   
-  //server.listen(3000, () => {
-   // console.log('server running at http://localhost:3000');
- // });
+ //server.listen(3000, () => {
+ // console.log('server running at http://localhost:3000');
+  //});
 
   /*
    * ALL FUNCTIONS ARE STORED UNDER HERE!!!
    * 
    */
 
-
+  //I found this on stackoverflow somewhere, but I don't remember when. This just returns a promise, which is funny because
+  //I believe async functions return promises by default, so this is a little redundant
   async function later(delay) {
     return new Promise(function(resolve) {
         setTimeout(resolve, delay);
@@ -335,7 +357,6 @@ async function getPlaylistData() {
     var offset = jsonData["nb_tracks"] - 25 ;
     //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
     offset = Math.floor(Math.random() * offset);
-    //offset = 652;
     //Requesting twice may seem a little silly, but this allows me to grab the size of the playlist to dynamically allow for greater
     //song ranges so that this plus selecting a random amount of items will provide greater song variation.
     console.log("Offset: " + offset);
@@ -348,7 +369,7 @@ async function getPlaylistData() {
 }
 
 /* The following is for Spotify embeds, and according to the spotify terms of service, using the API for a
-song game such as this is against the rules, so another solution must be found. */
+song game such as this is against the rules, so another solution must be found. Leaving this for posterity. */
 
   async function getSpotifySongAudio(songId) {
     //https://github.com/spotify/web-api/issues/148#issuecomment-628197023

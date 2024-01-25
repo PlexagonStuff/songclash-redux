@@ -119,6 +119,10 @@ socket.on("reset", (data)=> {
     element.style.display = "none";
 });
 
+socket.on("previousSong", (data)=> {
+    document.getElementById("previousSong").innerText = "Previous Song: " +  data.prevArtist + "-" + data.prevSong;
+})
+
 const form = document.getElementById('form');
 var username = document.getElementById('username');
 var joinRoomName = document.getElementById("joinRoom");
