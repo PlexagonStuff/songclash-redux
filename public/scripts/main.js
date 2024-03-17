@@ -44,7 +44,23 @@ socket.on("roundStart", (data)=> {
     for (var peeps of Object.keys(data.scoreboard)) {
         if (peeps != "rounds") {
         const item = document.createElement('li');
-        item.textContent = peeps + ": " + (data.scoreboard[peeps]).toString();
+        const round = document.getElementById("sillyRound").innerText.split(" ")[1];
+        let artistStatus = "";
+        let titleStatus = "";
+
+        if (data.scoreboard["rounds"][round.toString()][peeps]["artistTrue"]) {
+            artistStatus = " Artist: " + String.fromCodePoint(0x2713);
+        }
+        else {
+            artistStatus = " Artist: " + String.fromCodePoint(0x274C);
+        }
+        if (data.scoreboard["rounds"][round.toString()][peeps]["songTrue"]) {
+            titleStatus = " Song: " + String.fromCodePoint(0x2713);
+        }
+        else {
+            titleStatus = " Song: " + String.fromCodePoint(0x274C);
+        }
+        item.textContent = peeps + ": " + (data.scoreboard[peeps]).toString() + titleStatus + artistStatus;
         console.log(item.textContent);
        scoreboard.appendChild(item);
         }
@@ -52,7 +68,7 @@ socket.on("roundStart", (data)=> {
 
     var audioPlayer = document.getElementById("audioPlayer");
     audioPlayer.src = data.audio;
-    audioPlayer.volume = 0.5;
+    audioPlayer.volume = 0.4;
     audioPlayer.load();
     audioPlayer.play();
 });
@@ -63,7 +79,24 @@ socket.on("scoreUpdate", (data)=> {
     for (var peeps of Object.keys(data.scoreboard)) {
         if (peeps != "rounds") {
         const item = document.createElement('li');
-        item.textContent = peeps + ": " + (data.scoreboard[peeps]).toString();
+        const round = document.getElementById("sillyRound").innerText.split(" ")[1];
+        let artistStatus = "";
+        let titleStatus = "";
+
+        if (data.scoreboard["rounds"][round.toString()][peeps]["artistTrue"]) {
+            artistStatus = " Artist: " + String.fromCodePoint(0x2713);
+        }
+        else {
+            artistStatus = " Artist: " + String.fromCodePoint(0x274C);
+        }
+        if (data.scoreboard["rounds"][round.toString()][peeps]["songTrue"]) {
+            titleStatus = " Song: " + String.fromCodePoint(0x2713);
+        }
+        else {
+            titleStatus = " Song: " + String.fromCodePoint(0x274C);
+        }
+
+        item.textContent = peeps + ": " + (data.scoreboard[peeps]).toString() + titleStatus + artistStatus;
         console.log(item.textContent);
        scoreboard.appendChild(item);
         }

@@ -230,9 +230,26 @@ io.on('connection', (socket) => {
       */
       var artistTrue = games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["artistTrue"];
       var songTrue = games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["songTrue"];
+      
+      /*
+      This checks every word in the song title or artist with all the words guessed by the player so far. This solution still
+      succeeds even if the song repeats words in the artist name or song title, while simply checking array lengths against
+      each other does not.
+      */
+      let allArtistWords = true
+      for (var words of songArtistWords) {
+        if (!games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["artist"].includes(words)) {
+          allArtistWords = false;
+        }
+      }
+      let allTitleWords = true
+      for (var words of titleArtistWords) {
+        if (!games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["song"].includes(words)) {
+          allTitleWords = false;
+        }
+      }
 
-
-      if (games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["artist"].length == songArtistWords.length) {
+      if (allArtistWords) {
         if (artistTrue == false) {
           artistTrue = true;
           games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["artistTrue"] = true;
@@ -240,7 +257,7 @@ io.on('connection', (socket) => {
       }
         }
          
-      if (games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["song"].length == titleArtistWords.length) {
+      if (allTitleWords) {
         if (songTrue == false) {
           songTrue = true;
           games[data.room]["scoreboard"]["rounds"][data.round.toString()][users.get(socket.id)]["songTrue"] = true;
@@ -355,8 +372,10 @@ async function getPlaylistData() {
     var jsonData = await response.json();
     //Deezer provides 25 tracks per request
     var offset = jsonData["nb_tracks"] - 25 ;
+    //var offset = 1007-10;
     //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
     offset = Math.floor(Math.random() * offset);
+    //offset = jsonData["nb_tracks"] - 25 ;
     //Requesting twice may seem a little silly, but this allows me to grab the size of the playlist to dynamically allow for greater
     //song ranges so that this plus selecting a random amount of items will provide greater song variation.
     console.log("Offset: " + offset);
