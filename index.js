@@ -64,18 +64,19 @@ io.on('connection', (socket) => {
       }
       var bob = data.room;
       console.log(data.room);
-       io.to(bob).emit("roomjoin", {roomName: bob, users: lolusers});
+      io.to(bob).emit("roomjoin", {roomName: bob, users: lolusers});
     }
     });
 
     socket.on("startGame", async (data)=> {
+      console.log(JSON.stringify(data))
       //https://developer.spotify.com/documentation/web-api/tutorials/getting-started
       //const accessToken = await getAccessKey();
       //console.log(accessToken);
-      let playlistData = await getPlaylistData();
+      //let playlistData = await getPlaylistData();
       //console.log(playlistData);
       //console.log(playlistData.length);
-      playlistData = await getRandomSubarray(10);
+      let playlistData = await getRandomSubarray(10);
 
       var songs = {};
       var counter = 1;
@@ -123,6 +124,21 @@ io.on('connection', (socket) => {
         for (timer; timer > 0; timer--) {
           io.to(data.room).emit("timer", {time: timer });
           await later(1000);
+          var peeps = games[data.room]["people"]
+          var counter = 0;
+          for (var x = 0; x < peeps.length; x++) {
+            var pals = peeps[x];
+            if (games[data.room]["scoreboard"]["rounds"][games[data.room]["round"].toString()][pals]["artistTrue"] && games[data.room]["scoreboard"]["rounds"][games[data.room]["round"].toString()][pals]["songTrue"]) {
+              counter++;
+            }
+          }
+          if (counter == peeps.length) {
+            if (games[data.room]["round"] != 10) {
+              break;
+            }
+          }
+            
+          
         }
         io.to(data.room).emit("previousSong", {prevSong: games[data.room]["songs"][games[data.room]["round"].toString()]["name"], prevArtist: games[data.room]["songs"][games[data.room]["round"].toString()]["artist"]});
         console.log("Woah the timer worked?");
@@ -151,7 +167,8 @@ io.on('connection', (socket) => {
 
       //Send players back to the "main" screen
       io.to(data.room).emit("reset");
-
+      //Closes the room connection
+      io.in(data.room).disconnectSockets();
       delete games[data.room];
       console.log(rooms);
       console.log(users);
@@ -343,20 +360,26 @@ io.on('connection', (socket) => {
 
   //https://stackoverflow.com/questions/11935175/sampling-a-random-subset-from-an-array/11935263#11935263
 
-  //Nvm, I re-did this all myself.
+  //Nvm, I re-did this all myself. The purpose of this is to get 10 unique songs from all across the playlist
+  //that all feature working preview tracks so the game can work
   async function getRandomSubarray(size) {
     var shuffled = [];
     while (shuffled.length < size) {
       var arr = await getPlaylistData()
-      var randomInt = Math.floor(Math.random() * arr.length);
-      var randomSong = arr.at(randomInt);
-      console.log(randomSong["preview"]);
-      if (!shuffled.includes(randomSong)) {
-        if (randomSong["preview"] != "") {
-          shuffled.push(randomSong);
+      let song = null
+      while (song == null) {
+        var randomInt = Math.floor(Math.random() * arr.length);
+        var randomSong = arr.at(randomInt);
+        if (!(shuffled.includes(randomSong))) {
+          if (randomSong["preview"] != "") {
+            song = randomSong;
+          }
         }
       }
+      
+      shuffled.push(song);
       console.log(shuffled.length);
+      console.log(song["preview"]);
     }
     
     return shuffled;
