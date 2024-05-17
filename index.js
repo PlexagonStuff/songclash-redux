@@ -75,7 +75,7 @@ io.on('connection', (socket) => {
       let playlistData = await getPlaylistData();
       //console.log(playlistData);
       //console.log(playlistData.length);
-      playlistData = await getRandomSubarray(playlistData, 10);
+      playlistData = await getRandomSubarray(10);
 
       var songs = {};
       var counter = 1;
@@ -344,9 +344,10 @@ io.on('connection', (socket) => {
   //https://stackoverflow.com/questions/11935175/sampling-a-random-subset-from-an-array/11935263#11935263
 
   //Nvm, I re-did this all myself.
-  async function getRandomSubarray(arr, size) {
+  async function getRandomSubarray(size) {
     var shuffled = [];
     while (shuffled.length < size) {
+      var arr = await getPlaylistData()
       var randomInt = Math.floor(Math.random() * arr.length);
       var randomSong = arr.at(randomInt);
       console.log(randomSong["preview"]);
