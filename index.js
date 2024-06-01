@@ -144,6 +144,7 @@ io.on('connection', (socket) => {
         console.log("Woah the timer worked?");
         games[data.room]["round"] = games[data.room]["round"] + 1;
       }
+      games[data.room]["round"] = 10
       console.log("Welcome to the abyss of nothing...")
       await later(5000);
       var usersInRoom = [];
