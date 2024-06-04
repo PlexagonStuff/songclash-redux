@@ -19,6 +19,7 @@ const server = createServer(app);
 const io = new Server(server);
 var users = new Map();
 var rooms = [];
+var gameStart = new Map();
 var userRooms = new Map();
 var games = {}
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -51,6 +52,7 @@ io.on('connection', (socket) => {
        if (rooms.indexOf(data.room) == -1) {
         rooms.push(data.room);
        }
+       gameStart.set(data.room, false)
        userRooms.set(socket.id, data.room);
        socket.join(data.room);
        console.log("Room set up!");
@@ -69,7 +71,13 @@ io.on('connection', (socket) => {
     });
 
     socket.on("startGame", async (data)=> {
-      console.log(JSON.stringify(data))
+      //console.log(JSON.stringify(data))
+      console.log("Hello! I would like to start a game please!")
+      if (gameStart.get(data.room)) {
+        return;
+      }
+      gameStart.set(data.room, true)
+
       //https://developer.spotify.com/documentation/web-api/tutorials/getting-started
       //const accessToken = await getAccessKey();
       //console.log(accessToken);

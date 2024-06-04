@@ -162,7 +162,7 @@ var joinRoomName = document.getElementById("joinRoom");
 var createRoomName = document.getElementById("createRoom");
 
 document.getElementById("joinButton").onclick = function(){joinRoom()};
-document.getElementById("createButton").onclick = function(){createRoom()};
+//document.getElementById("createButton").onclick = function(){createRoom()};
 document.getElementById("startGame").onclick = function(){startGame()};
 
 var guessForm = document.getElementById("guessForm");
