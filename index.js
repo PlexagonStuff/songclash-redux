@@ -47,7 +47,7 @@ io.on('connection', (socket) => {
       console.log(data);
        //console.log("Room set up!");
        if (Object.keys(games).includes(data.room) == false ) {
-       users.set(socket.id, data.user);
+        users.set(socket.id, data.user);
        if (rooms.indexOf(data.room) == -1) {
         rooms.push(data.room);
        }
