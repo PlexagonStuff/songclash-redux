@@ -11,7 +11,7 @@ import {JSDOM} from 'jsdom';
 //so I may have to switch to it for the previews
 //https://developers.deezer.com/guidelines
 
-//https://nodejs.org/api/esm.html#:~:text=The%20CommonJS%20module%20require%20always,module%20from%20a%20CommonJS%20module.
+//https://nodejs.org/en/learn/command-line/how-to-read-environment-variables-from-nodejs
 import { default as stringSimilarity } from 'string-similarity';
 import {default as levenshtein} from 'js-levenshtein';
 const app = express();
